@@ -34,7 +34,6 @@ Bun.serve({
           await signupHandler(ws, data.data)
         }
     } else if (data.type === "validate") {
-        console.log('validating') // TODO: Remove
 
         CALLBACKS[data.data.callbackId](data)
         delete CALLBACKS[data.data.callbackId]
