@@ -1,84 +1,150 @@
-# Turborepo starter
+# **DePin Uptime Platform**  
 
-This Turborepo starter is maintained by the Turborepo core team.
+![Project Badge](https://img.shields.io/badge/status-active-brightgreen)  
+![WebSocket](https://img.shields.io/badge/communication-WebSocket-important)  
+![Monorepo](https://img.shields.io/badge/architecture-monorepo-9cf)  
 
-## Using this example
+A decentralized monitoring tool for tracking uptime, performance, and reliability of DePin (Decentralized Physical Infrastructure) networks with real-time WebSocket communication.
 
-Run the following command:
+---
 
-```sh
-npx create-turbo@latest
+## **🚀 Features**  
+- **Real-time monitoring** via WebSocket (Hub ↔ Validator)  
+- **Next.js dashboard** with authentication (Clerk)  
+- **Prisma ORM** with PostgreSQL for reliable data storage  
+- **Monorepo architecture** with Turbo for efficient development  
+- **End-to-end TypeScript** for type safety  
+
+---
+
+## **⚙️ Tech Stack**  
+
+### **Frontend (`apps/frontend`)**  
+- **Framework**: Next.js 15.2.3 (React 19)  
+- **Styling**: TailwindCSS + Radix UI  
+- **Auth**: Clerk  
+- **HTTP**: Axios  
+- **Utilities**: clsx, class-variance-authority  
+
+### **Backend (`apps/api`)**  
+- **Runtime**: Express.js (TypeScript)  
+- **Auth**: JWT  
+- **Security**: CORS enabled  
+
+### **Validator Service (`apps/validator`)**  
+- **Runtime**: Bun  
+- **Communication**: WebSocket client  
+
+### **Hub Service (`apps/hub`)**  
+- **Communication**: WebSocket server  
+
+### **Database (`packages/db`)**  
+- **ORM**: Prisma (PostgreSQL)  
+
+### **Dev Tools**  
+- **Runtime/PM**: Bun  
+- **Monorepo**: Turbo  
+- **Linting**: ESLint + Prettier  
+- **Type Safety**: TypeScript  
+
+### **Infrastructure**  
+- **Containerization**: Docker  
+- **Project Structure**: Workspace-based monorepo  
+
+---
+
+## **📡 Architecture Overview**  
+```mermaid
+graph LR
+  A[Frontend] -->|Axios| B[API]
+  B -->|Prisma| C[(Database)]
+  H[Hub] <-->|WebSocket| V[Validator]
 ```
 
-## What's inside?
 
-This Turborepo includes the following packages/apps:
+### **Flow Explanation:**
 
-### Apps and Packages
+- Frontend communicates with API via HTTP
+- API persists data to Database via Prisma
+- Hub and Validator maintain persistent bidirectional WebSocket connection:
+- Hub pushes status updates to Validator
+- Validator sends health reports back to Hub
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+---
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+## **🛠 Setup & Installation**
 
-### Utilities
+### **1. Prerequisites**
+Ensure your system has:
+- [Node.js](https://nodejs.org/) (v18 or higher)
+- [Docker](https://www.docker.com/) (v20 or higher)
+- [Bun](https://bun.sh/) (v1.0 or higher)
 
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
+```bash
+# Verify installations
+node -v
+docker --version
+bun -v
 ```
 
-### Develop
-
-To develop all apps and packages, run the following command:
-
+### **2. Clone Repository**
 ```
-cd my-turborepo
-pnpm dev
+git clone https://github.com/your-username/depin-uptime.git
+cd depin-uptime
 ```
 
-### Remote Caching
-
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
-
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
-
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
+### **3. Configure Environment**
 ```
-cd my-turborepo
-npx turbo login
+cp .env.example .env
+# Edit the .env file with your specific configurations in every folder that has a .env.example file
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
+### **4. Start Docker Services**
 ```
-npx turbo link
+docker compose up -d
 ```
 
-## Useful Links
+### **5. Install Dependencies**
+```
+bun install
+```
 
-Learn more about the power of Turborepo:
+### **6. Database Setup**
+```
+cd packages/db
+bun x prisma generate
+bun x prisma migrate dev
+bun seed.ts
+```
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+### **7 Run Services**
+Run each service in a different terminal
+```
+# API Service
+cd apps/api && bun run index.ts
+
+# Hub Service (WebSocket Server)
+cd apps/hub && bun run index.ts
+
+# Validator Service (WebSocket Client)
+cd apps/validator && bun run index.ts
+
+# Frontend Development
+cd apps/frontend && bun run dev
+```
+---
+
+## **📬 Contact Me**
+
+### **For questions or feedback about this development project:**
+- **Name**: Devrat Dave  
+- **Email**: [devratdave02@hotmail.com](mailto:devratdave02@hotmail.com)  
+- **GitHub**: [@devratdave](https://github.com/devratdave) 
+- **GitHub Issues**: [Report bugs/requests](https://github.com/devratdave/depin-uptime/issues) 
+
+### **Connect**
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/devratdave/)  
+
+---
+
+**Project Link**: [https://github.com/devratdave/depin-uptime](https://github.com/your-username/depin-uptime)
